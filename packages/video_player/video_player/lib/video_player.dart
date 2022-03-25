@@ -394,6 +394,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           break;
         case VideoEventType.unknown:
           break;
+        case VideoEventType.streamedPosition:
+          // TODO: Emit events
+          print('STREAMED POSITION: ${event.position?.inMilliseconds}');
+          break;
       }
     }
 

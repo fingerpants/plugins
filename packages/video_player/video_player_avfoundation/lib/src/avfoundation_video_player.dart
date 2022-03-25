@@ -119,6 +119,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Stream<double> positionStream() async* {}
+
+  @override
   Stream<VideoEvent> videoEventsFor(int textureId) {
     return _eventChannelFor(textureId)
         .receiveBroadcastStream()
@@ -147,6 +150,14 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
           return VideoEvent(eventType: VideoEventType.bufferingStart);
         case 'bufferingEnd':
           return VideoEvent(eventType: VideoEventType.bufferingEnd);
+        case 'streamedPosition':
+          final double raw = map['ms'] as double;
+          final int micros = raw.remainder(1000).round();
+          final int ms = raw.round();
+          return VideoEvent(
+            eventType: VideoEventType.streamedPosition,
+            position: Duration(milliseconds: ms, microseconds: micros),
+          );
         default:
           return VideoEvent(eventType: VideoEventType.unknown);
       }

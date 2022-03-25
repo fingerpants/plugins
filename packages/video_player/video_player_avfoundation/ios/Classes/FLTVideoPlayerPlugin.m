@@ -247,6 +247,16 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   _player = [AVPlayer playerWithPlayerItem:item];
   _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
 
+  [_player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1000) queue:NULL usingBlock:^(CMTime time) {
+    float totalMs = (Float64)(time.value * 1000) / (Float64)(time.timescale);
+    if (_eventSink != nil) {
+      _eventSink(@{
+        @"event" : @"streamedPosition",
+        @"ms" : @(totalMs),
+      });
+    }
+  }];
+
   [self createVideoOutputAndDisplayLink:frameUpdater];
 
   [self addObservers:item];

@@ -103,6 +103,11 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   Future<void> setMixWithOthers(bool mixWithOthers) {
     throw UnimplementedError('setMixWithOthers() has not been implemented.');
   }
+
+  /// Gets a live stream of positions. Raised approximately every 0.5ms.
+  Stream<double> positionStream() {
+    throw UnimplementedError('positionStream() has not been implemented.');
+  }
 }
 
 /// Description of the data source used to create an instance of
@@ -211,10 +216,16 @@ class VideoEvent {
     this.size,
     this.rotationCorrection,
     this.buffered,
+    this.position,
   });
 
   /// The type of the event.
   final VideoEventType eventType;
+
+  /// The position of the video.
+  /// 
+  /// Only used if [eventType] is [VideoEventType.streamedPosition].
+  final Duration? position;
 
   /// Duration of the video.
   ///
@@ -279,6 +290,9 @@ enum VideoEventType {
 
   /// An unknown event has been received.
   unknown,
+
+  /// Streamed position.
+  streamedPosition,
 }
 
 /// Describes a discrete segment of time within a video using a [start] and
