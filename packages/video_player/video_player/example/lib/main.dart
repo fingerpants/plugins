@@ -244,6 +244,12 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
         children: <Widget>[
           Container(padding: const EdgeInsets.only(top: 20.0)),
           const Text('With remote mp4'),
+          StreamBuilder<Duration>(
+            stream: _controller.streamingPosition,
+            builder: (BuildContext context, AsyncSnapshot<Duration> snapshot) {
+              return Text(snapshot.data?.inMilliseconds.toString() ?? '-');
+            },
+          ),
           Container(
             padding: const EdgeInsets.all(20),
             child: AspectRatio(

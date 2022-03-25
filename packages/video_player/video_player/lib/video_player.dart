@@ -296,11 +296,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Completer<void>? _creatingCompleter;
   StreamSubscription<dynamic>? _eventSubscription;
   _VideoAppLifeCycleObserver? _lifeCycleObserver;
+  final StreamController<Duration> _streamingPositionController =
+      StreamController<Duration>.broadcast();
 
   /// The id of a texture that hasn't been initialized.
   @visibleForTesting
   static const int kUninitializedTextureId = -1;
   int _textureId = kUninitializedTextureId;
+
+  /// The current streaming position.
+  Stream<Duration> get streamingPosition => _streamingPositionController.stream;
 
   /// This is just exposed for testing. It shouldn't be used by anyone depending
   /// on the plugin.
@@ -395,8 +400,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         case VideoEventType.unknown:
           break;
         case VideoEventType.streamedPosition:
-          // TODO: Emit events
-          print('STREAMED POSITION: ${event.position?.inMilliseconds}');
+          if (event.position != null) {
+            _streamingPositionController.sink.add(event.position!);
+          }
           break;
       }
     }
@@ -423,6 +429,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   @override
   Future<void> dispose() async {
+    _streamingPositionController.close();
     if (_creatingCompleter != null) {
       await _creatingCompleter!.future;
       if (!_isDisposed) {

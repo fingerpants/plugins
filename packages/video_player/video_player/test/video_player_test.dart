@@ -72,6 +72,9 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
 
   @override
   void setCaptionOffset(Duration delay) {}
+
+  @override
+  Stream<Duration> get streamingPosition => throw UnimplementedError();
 }
 
 Future<ClosedCaptionFile> _loadClosedCaption() async =>
